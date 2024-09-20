@@ -1,0 +1,226 @@
+<section id="clinic" class="page">
+    <div class="bg-white p-6 rounded-lg shadow">
+        <!-- Title and Action Buttons -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Clinic List</h2>
+            <div class="flex space-x-2">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="importClinicData()">Import from
+                    Spreadsheet</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded-lg" onclick="openAddClinicPopup()">Add
+                    Clinic</button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-4">
+            <input type="text" id="searchClinicInput" class="border border-gray-300 p-2 w-full rounded-lg"
+                placeholder="Search by Email, Admin Email, or Status" oninput="searchClinics()">
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left table-auto border-collapse">
+                <thead>
+                    <tr>
+                        <th class="border-b p-4">Email</th>
+                        <th class="border-b p-4">Clinic Admin Email</th>
+                        <th class="border-b p-4">Contact No</th>
+                        <th class="border-b p-4">Specialization</th>
+                        <th class="border-b p-4">Clinic Address</th>
+                        <th class="border-b p-4">Status</th>
+                        <th class="border-b p-4">Action</th>
+                    </tr>
+                    <!-- Filters Row -->
+                    <tr>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Email"></td>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Admin Email"></td>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Contact"></td>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Specialization"></td>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Address"></td>
+                        <td class="p-2"><input type="text" class="border border-gray-300 p-1 w-full rounded-lg"
+                                placeholder="Filter Status"></td>
+                        <td class="p-2"></td>
+                    </tr>
+                </thead>
+                <tbody id="clinicsTableBody">
+                    <!-- Clinic rows will go here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination and Rows per Page -->
+        <div class="flex justify-between items-center mt-4">
+            <div>
+                <label for="clinicRowsPerPage" class="mr-2">Rows per page:</label>
+                <select id="clinicRowsPerPage" class="border border-gray-300 p-2 rounded-lg"
+                    onchange="changeClinicRowsPerPage()">
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="bg-gray-300 px-3 py-2 rounded-lg" onclick="previousClinicPage()">Previous</button>
+                <input type="number" id="clinicCurrentPage"
+                    class="border border-gray-300 p-2 w-16 rounded-lg text-center" value="1"
+                    onchange="goToClinicPage()">
+                <span>/</span>
+                <span id="clinicTotalPages">5</span>
+                <button class="bg-gray-300 px-3 py-2 rounded-lg" onclick="nextClinicPage()">Next</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Clinic Modal -->
+<div id="addClinicModal" class="fixed z-50 inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-semibold mb-4">Add Clinic</h2>
+        <form id="addClinicForm" onsubmit="addClinic(); return false;">
+            <div class="mb-4">
+                <label for="clinicEmail" class="block text-gray-700">Clinic Email</label>
+                <input type="email" id="clinicEmail" class="border border-gray-300 p-2 w-full rounded-lg" required>
+            </div>
+            <div class="mb-4">
+                <label for="clinicAdminEmail" class="block text-gray-700">Admin Email</label>
+                <input type="email" id="clinicAdminEmail" class="border border-gray-300 p-2 w-full rounded-lg" required>
+            </div>
+            <div class="mb-4">
+                <label for="clinicContact" class="block text-gray-700">Contact No</label>
+                <input type="text" id="clinicContact" class="border border-gray-300 p-2 w-full rounded-lg" required>
+            </div>
+            <div class="mb-4">
+                <label for="clinicSpecialization" class="block text-gray-700">Specialization</label>
+                <input type="text" id="clinicSpecialization" class="border border-gray-300 p-2 w-full rounded-lg"
+                    required>
+            </div>
+            <div class="mb-4">
+                <label for="clinicAddress" class="block text-gray-700">Clinic Address</label>
+                <input type="text" id="clinicAddress" class="border border-gray-300 p-2 w-full rounded-lg" required>
+            </div>
+            <div class="mb-4">
+                <label for="clinicStatus" class="block text-gray-700">Status</label>
+                <select id="clinicStatus" class="border border-gray-300 p-2 w-full rounded-lg" required>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded-lg mr-2"
+                    onclick="closeAddClinicPopup()">Cancel</button>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg">Add
+                    Clinic</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    // Mock clinic data
+    const clinics = [
+        { email: 'clinic1@example.com', adminEmail: 'admin1@example.com', contact: '1234567890', specialization: 'Dermatology', address: '123 Main St', status: 'active' },
+        { email: 'clinic2@example.com', adminEmail: 'admin2@example.com', contact: '0987654321', specialization: 'Pediatrics', address: '456 Elm St', status: 'inactive' }
+        // Add more data here
+    ];
+
+    // Load clinic data into the table
+    function loadClinics() {
+        const tbody = document.getElementById('clinicsTableBody');
+        tbody.innerHTML = ''; // Clear previous data
+        clinics.forEach(clinic => {
+            const row = `
+            <tr>
+                <td class="p-4 border-b">${clinic.email}</td>
+                <td class="p-4 border-b">${clinic.adminEmail}</td>
+                <td class="p-4 border-b">${clinic.contact}</td>
+                <td class="p-4 border-b">${clinic.specialization}</td>
+                <td class="p-4 border-b">${clinic.address}</td>
+                <td class="p-4 border-b">${clinic.status}</td>
+                <td class="p-4 border-b"><button class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button></td>
+            </tr>
+        `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Call this function when page loads to initialize clinic data
+    loadClinics();
+
+    // Function to handle searching clinics
+    function searchClinics() {
+        const query = document.getElementById('searchClinicInput').value.toLowerCase();
+        const filteredClinics = clinics.filter(clinic => {
+            return (
+                clinic.email.toLowerCase().includes(query) ||
+                clinic.adminEmail.toLowerCase().includes(query) ||
+                clinic.status.toLowerCase().includes(query)
+            );
+        });
+        updateClinicTable(filteredClinics);
+    }
+
+    // Function to update the table based on search or filter
+    function updateClinicTable(filteredClinics) {
+        const tbody = document.getElementById('clinicsTableBody');
+        tbody.innerHTML = ''; // Clear previous data
+        filteredClinics.forEach(clinic => {
+            const row = `
+            <tr>
+                <td class="p-4 border-b">${clinic.email}</td>
+                <td class="p-4 border-b">${clinic.adminEmail}</td>
+                <td class="p-4 border-b">${clinic.contact}</td>
+                <td class="p-4 border-b">${clinic.specialization}</td>
+                <td class="p-4 border-b">${clinic.address}</td>
+                <td class="p-4 border-b">${clinic.status}</td>
+                <td class="p-4 border-b"><button class="bg-red-500 text-white px-3 py-1 rounded-lg" >Delete</button></td>
+            </tr>
+        `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Function to open the Add Clinic popup
+    function openAddClinicPopup() {
+        document.getElementById('addClinicModal').classList.remove('hidden');
+    }
+
+    // Function to close the Add Clinic popup
+    function closeAddClinicPopup() {
+        document.getElementById('addClinicModal').classList.add('hidden');
+    }
+
+    // Function to add a new clinic to the table
+    function addClinic() {
+        const clinicEmail = document.getElementById('clinicEmail').value;
+        const clinicAdminEmail = document.getElementById('clinicAdminEmail').value;
+        const clinicContact = document.getElementById('clinicContact').value;
+        const clinicSpecialization = document.getElementById('clinicSpecialization').value;
+        const clinicAddress = document.getElementById('clinicAddress').value;
+        const clinicStatus = document.getElementById('clinicStatus').value;
+
+        const newClinic = {
+            email: clinicEmail,
+            adminEmail: clinicAdminEmail,
+            contact: clinicContact,
+            specialization: clinicSpecialization,
+            address: clinicAddress,
+            status: clinicStatus
+        };
+
+        clinics.push(newClinic);
+        loadClinics(); // Reload the table with new clinic data
+        closeAddClinicPopup(); // Close the popup
+    }
+
+    // Function to import clinic data (mock function, implement actual logic)
+    function importClinicData() {
+        alert("Import functionality to be implemented.");
+    }
+
+    // Additional functions for pagination and filtering can go here...
+</script>
