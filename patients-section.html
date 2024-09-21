@@ -114,3 +114,72 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Mock patient data
+    const patients = [
+        { id: '1', name: 'John Doe', clinic: 'Main Clinic', email: 'john@example.com', mobile: '1234567890', registeredOn: '2023-09-15', status: 'active' },
+        { id: '2', name: 'Jane Smith', clinic: 'West Clinic', email: 'jane@example.com', mobile: '0987654321', registeredOn: '2023-09-16', status: 'inactive' }
+    ];
+
+    // Load patient data into the table
+    function loadPatients() {
+        const tbody = document.getElementById('patientsTableBody');
+        if (!tbody) {
+            console.error('Error: patientsTableBody element not found');
+            return;
+        }
+        tbody.innerHTML = ''; // Clear previous data
+        patients.forEach(patient => {
+            const row = `
+                <tr>
+                    <td class="p-4 border-b">${patient.id}</td>
+                    <td class="p-4 border-b">${patient.name}</td>
+                    <td class="p-4 border-b">${patient.clinic}</td>
+                    <td class="p-4 border-b">${patient.email}</td>
+                    <td class="p-4 border-b">${patient.mobile}</td>
+                    <td class="p-4 border-b">${patient.registeredOn}</td>
+                    <td class="p-4 border-b">${patient.status}</td>
+                    <td class="p-4 border-b"><button class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Function to handle searching patients
+    function searchPatients() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const filteredPatients = patients.filter(patient => {
+            return (
+                patient.id.toLowerCase().includes(query) ||
+                patient.name.toLowerCase().includes(query) ||
+                patient.email.toLowerCase().includes(query) ||
+                patient.status.toLowerCase().includes(query)
+            );
+        });
+        updatePatientTable(filteredPatients);
+    }
+
+    // Function to update patient table
+    function updatePatientTable(filteredPatients) {
+        const tbody = document.getElementById('patientsTableBody');
+        tbody.innerHTML = ''; // Clear previous data
+        filteredPatients.forEach(patient => {
+            const row = `
+                <tr>
+                    <td class="p-4 border-b">${patient.id}</td>
+                    <td class="p-4 border-b">${patient.name}</td>
+                    <td class="p-4 border-b">${patient.clinic}</td>
+                    <td class="p-4 border-b">${patient.email}</td>
+                    <td class="p-4 border-b">${patient.mobile}</td>
+                    <td class="p-4 border-b">${patient.registeredOn}</td>
+                    <td class="p-4 border-b">${patient.status}</td>
+                    <td class="p-4 border-b"><button class="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+</script>

@@ -1,0 +1,28 @@
+<!-- Messages Section -->
+<section id="messages" class="page">
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold">Messages</h2>
+        <div class="flex justify-between mb-4">
+            <button class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="loadPatients()">Refresh</button>
+            <input type="text" id="searchPatientInput" placeholder="Search Patients..."
+                class="border border-gray-300 p-2 w-full rounded-lg" oninput="searchPatientsForMessages()">
+        </div>
+        <div id="patientsList" class="mb-4">
+            <!-- Patient list will be populated here -->
+        </div>
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold">Send Message</h3>
+            <textarea id="messageContent" rows="4" class="border border-gray-300 p-2 w-full rounded-lg"
+                placeholder="Type your message here..."></textarea>
+            <div class="flex justify-end mt-2">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div id="messagesHistory" class="mt-4">
+            <h3 class="text-lg font-semibold">Messages History</h3>
+            <ul id="messagesList" class="list-disc pl-5">
+                <!-- Messages will be displayed here -->
+            </ul>
+        </div>
+    </div>
+</section>
