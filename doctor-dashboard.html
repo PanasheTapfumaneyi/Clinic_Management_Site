@@ -39,13 +39,14 @@
         <aside class="w-64 bg-white p-4 h-screen shadow-md">
             <ul id="sidebar" class="space-y-4">
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
-                        onclick="showPage('dashboard.html' , this)">Dashboard</a></li>
+                        onclick="showPage('dashboard.html' , this)"><i class="fa-solid fa-bars"></i> Dashboard</a></li>
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
                         onclick="showPage('appointments-section.html' , this)">Appointments</a></li>
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
                         onclick="showPage('patients-section.html' , this)">Patient Records</a></li>
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
-                        onclick="showPage('messages.html' , this)">Messages</a></li>
+                        onclick="showPage('messages.html', this)">Messages</a></li>
+
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
                         onclick="showPage('prescriptions-section.html' , this)">Prescriptions</a></li>
                 <li><a href="#" class="flex items-center p-2 hover:bg-gray-200 rounded-lg"
@@ -58,36 +59,7 @@
         <!-- Main Content -->
         <main id="content-area" class="flex-1 p-8">
 
-            </section>
 
-
-            <!-- Encounters Section -->
-            <section id="encounters" class="page hidden">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold">Encounters</h2>
-                    <p class="text-center text-gray-500">Encounter Data Here</p>
-                </div>
-            </section>
-
-
-
-
-
-            <!-- Doctors Section -->
-            <section id="doctors" class="page hidden">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold">Doctors List</h2>
-                    <p class="text-center text-gray-500">Doctor Data Here</p>
-                </div>
-            </section>
-
-            <!-- Receptionist Section -->
-            <section id="receptionist" class="page hidden">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold">Receptionist Information</h2>
-                    <p class="text-center text-gray-500">Receptionist Data Here</p>
-                </div>
-            </section>
 
 
 
@@ -136,6 +108,12 @@
     </div>
 
     <script>
+
+        // Mock appointment data
+        let appointments = [
+            { service: 'General Checkup', charges: '$100', paymentMode: 'Cash', status: 'Completed' },
+            { service: 'Dental Cleaning', charges: '$200', paymentMode: 'Credit Card', status: 'Pending' }
+        ];
 
 
 
@@ -417,28 +395,55 @@
         function sendMessage() {
             const messageContent = document.getElementById('messageContent').value;
             const selectedPatientId = document.querySelector('input[name="patient"]:checked');
+
             if (selectedPatientId && messageContent) {
                 const patient = patients.find(p => p.id === selectedPatientId.value);
                 messages.push({ patient, content: messageContent });
-                displayMessages();
-                document.getElementById('messageContent').value = '';
+                displayMessages(); // Refresh the messages list after sending a message
+                document.getElementById('messageContent').value = ''; // Clear the message input
             }
         }
 
         function displayMessages() {
+            const selectedPatientId = document.querySelector('input[name="patient"]:checked');
             const messagesList = document.getElementById('messagesList');
-            messagesList.innerHTML = ''; // Clear previous messages
-            messages.forEach(msg => {
-                const li = document.createElement('li');
-                li.textContent = `Message to ${msg.patient.name}: ${msg.content}`;
-                messagesList.appendChild(li);
-            });
+            const conversationArea = document.getElementById('conversationArea');
+            const patientNameElement = document.getElementById('patientName');
+
+            if (selectedPatientId) {
+                const patient = patients.find(p => p.id === selectedPatientId.value);
+
+                // Update the patient name in the UI
+                patientNameElement.textContent = `Conversation with ${patient.name}`;
+
+                // Show the conversation area if it's hidden
+                conversationArea.classList.remove('hidden');
+
+                // Filter messages for the selected patient
+                const patientMessages = messages.filter(msg => msg.patient.id === selectedPatientId.value);
+
+                // Clear previous messages
+                messagesList.innerHTML = '';
+
+                // Display messages for the selected patient
+                patientMessages.forEach(msg => {
+                    const li = document.createElement('li');
+                    li.textContent = `Message to ${msg.patient.name}: ${msg.content}`;
+                    messagesList.appendChild(li);
+                });
+            } else {
+                patientNameElement.textContent = 'Select a patient';
+                conversationArea.classList.add('hidden');
+            }
         }
+
 
         // Display initial messages on load
         window.onload = function () {
             loadPatients();
             displayMessages(); // Add this line to display initial messages
+            selectPatient(patient);
+            searchPatientsForMessages()
         };
 
         function searchPatientsForMessages() {
@@ -450,20 +455,22 @@
         function displayPatientList(filteredPatients) {
             const patientsList = document.getElementById('patientsList');
             patientsList.innerHTML = ''; // Clear previous patients
+
             filteredPatients.forEach(patient => {
                 const label = document.createElement('label');
                 label.classList.add('block');
-                label.innerHTML = `<input type="radio" name="patient" value="${patient.id}"> ${patient.name} (${patient.email})`;
+                label.innerHTML = `<input type="radio" name="patient" value="${patient.id}" onchange="displayMessages()"> ${patient.name} (${patient.email})`;
                 patientsList.appendChild(label);
             });
         }
 
-        window.onload = loadPatients;
-        // Mock appointment data
-        let appointments = [
-            { service: 'General Checkup', charges: '$100', paymentMode: 'Cash', status: 'Completed' },
-            { service: 'Dental Cleaning', charges: '$200', paymentMode: 'Credit Card', status: 'Pending' }
-        ];
+
+        window.onload = displayPatientList(filteredPatients);
+
+
+
+
+
 
         // Load appointment data into the table
         function loadAppointments() {
@@ -603,10 +610,12 @@
                     window.scrollTo(0, 0);
 
                     // Call function to initialize page-specific JavaScript after loading
-                    if (pageUrl.includes('appointments-section')) {
+                    if (pageUrl.includes('appointments-section.html')) {
                         loadAppointments(); // Initialize appointments JS logic
                     } else if (pageUrl.includes('patients-section.html')) {
                         loadPatients();
+                    } else if (pageUrl.includes('messages.html')) {
+                        displayMessages()
                     }
                 })
                 .catch(error => {
@@ -615,6 +624,7 @@
                 });
         }
     </script>
+    <script src="https://kit.fontawesome.com/3ac512e62a.js" crossorigin="anonymous"></script>
 
 
 </body>
