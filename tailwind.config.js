@@ -7,7 +7,8 @@ module.exports = {
         primary: '#ed923a',
         darkprimary: '#e07814',
         secondary: '#3ad1ed',
-        secondaryContent: '#032524'
+        secondaryContent: '#032524',
+        secondaryDark: '#14c0e0'
       },
       fontFamily: {
         abeezee: ['ABeeZee', 'sans-serif'],

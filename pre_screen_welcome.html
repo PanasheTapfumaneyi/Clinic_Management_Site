@@ -156,7 +156,10 @@
 
                 <button id="book-consultation-btn"
                     class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Book
-                    Consultation</button>
+                    With Nurse Practitioner</button>
+                <button id="gp-booking-btn"
+                    class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Book
+                    with a GP</button>
             </div>
 
             <!-- Custom Message for FirstNo -->
@@ -169,6 +172,9 @@
                 <button id="back-home-btn"
                     class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Back
                     to Home</button>
+                <button id="gp-booking-btn"
+                    class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Book
+                    with a GP</button>
             </div>
 
             <div id="SecondMessage" class="hidden text-center">
@@ -180,6 +186,9 @@
                 <button id="back-home-btn"
                     class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Back
                     to Home</button>
+                <button id="gp-booking-btn"
+                    class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Book
+                    with a GP</button>
             </div>
 
             <div id="ThirdMessage" class="hidden text-center">
@@ -191,6 +200,9 @@
                 <button id="back-home-btn"
                     class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition duration-300">Back
                     to Home</button>
+                <button id="gp-booking-btn" class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition
+                duration-300">Book
+                    with a GP</button>
             </div>
 
             <div id="FourthMessage" class="hidden text-center">
@@ -198,13 +210,20 @@
                 </p>
                 <!-- Back to Home Button -->
                 <button id="back-home-btn-4" class="bg-blue-600 text-white py-2 px-4 rounded-lg">Back to Home</button>
+                <button id="gp-booking-btn" class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition
+            duration-300">Book
+                    with a GP</button>
             </div>
+
 
             <div id="FifthMessage" class="hidden text-center">
                 <p class="text-gray-600 mb-4">Unfortunately, you are likely not suitable for plant medicine treatment.
                 </p>
                 <!-- Back to Home Button -->
                 <button id="back-home-btn-5" class="bg-blue-600 text-white py-2 px-4 rounded-lg">Back to Home</button>
+                <button id="gp-booking-btn" class="bg-orange-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-orange-600 transition
+                duration-300">Book
+                    with a GP</button>
             </div>
         </div>
 
@@ -284,29 +303,34 @@
                 questions[currentQuestion].classList.add('hidden');
                 QuestionOneMessage.classList.remove('hidden');
                 attachBackHomeListener(); // Attach listener for "Back to Home"
+                attachGPBookingListener();
                 return;
             } else if (currentQuestion === 1 && selectedAnswer === 'SecondQuestionNo') {
                 questions[currentQuestion].classList.add('hidden');
                 QuestionTwoMessage.classList.remove('hidden');
                 attachBackHomeListener(); // Attach listener for "Back to Home"
+                attachGPBookingListener();
                 return;
             }
             else if (currentQuestion === 2 && selectedAnswer === 'ThirdQuestionNo') {
                 questions[currentQuestion].classList.add('hidden');
                 QuestionThreeMessage.classList.remove('hidden');
                 attachBackHomeListener(); // Attach listener for "Back to Home"
+                attachGPBookingListener();
                 return;
             }
             else if (currentQuestion === 3 && selectedAnswer === 'FourthQuestionNo') {
                 questions[currentQuestion].classList.add('hidden');
                 QuestionFourMessage.classList.remove('hidden');
                 attachBackHomeListener(); // Attach listener for "Back to Home"
+                attachGPBookingListener();
                 return;
             }
             else if (currentQuestion === 4 && selectedAnswer === 'FifthQuestionNo') {
                 questions[currentQuestion].classList.add('hidden');
                 QuestionFiveMessage.classList.remove('hidden');
                 attachBackHomeListener(); // Attach listener for "Back to Home"
+                attachGPBookingListener();
                 return;
             }
 
@@ -317,6 +341,7 @@
                 questions[currentQuestion - 1].classList.add('hidden');
                 thankYou.classList.remove('hidden');
                 attachBookNowListener(); // Attach listener for "Book Consultation"
+                attachGPBookingListener();
             }
         });
 
@@ -335,6 +360,14 @@
             backHomeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     window.location.href = '/'; // Redirect to the home page
+                });
+            });
+        }
+        function attachGPBookingListener() {
+            const backHomeBtns = document.querySelectorAll('[id^=gp-booking-btn]');
+            backHomeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    window.location.href = 'gp-booking.html'; // Redirect to the home page
                 });
             });
         }
